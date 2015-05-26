@@ -33,6 +33,10 @@ do_install() {
 	if ! ${@bb.utils.contains('PACKAGECONFIG', 'update-alternatives', 'true', 'false', d)}; then
 		rm -f "${D}${bindir}/update-alternatives"
 	fi
+	if [ -e ${D}${bindir}/update-alternatives ]; then
+        	sed -i s:/usr/lib/opkg:/var/lib/opkg: ${D}${bindir}/update-alternatives
+	fi
+
 }
 
 do_install:append:class-target() {
