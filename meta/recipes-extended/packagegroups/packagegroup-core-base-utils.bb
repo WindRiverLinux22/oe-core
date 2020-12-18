@@ -33,18 +33,18 @@ RDEPENDS:${PN} = "\
     grep \
     gzip \
     ${@bb.utils.contains("DISTRO_FEATURES", "systemd", "", "ifupdown", d)} \
-    inetutils \
-    inetutils-ping \
-    inetutils-telnet \
-    inetutils-tftp \
-    inetutils-traceroute \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'inetutils', d)} \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'inetutils-ping', d)} \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'inetutils-telnet', d)} \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'inetutils-tftp', d)} \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'inetutils-traceroute', d)} \
     iproute2 \
     ${@bb.utils.contains("MACHINE_FEATURES", "keyboard", "kbd", "", d)} \
     kmod \
     less \
     ncurses-tools \
     net-tools \
-    parted \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'parted', d)} \
     patch \
     procps \
     psmisc \
@@ -55,7 +55,7 @@ RDEPENDS:${PN} = "\
     unzip \
     util-linux \
     ${VIRTUAL-RUNTIME_vim} \
-    wget \
+    ${@bb.utils.contains('INCOMPATIBLE_LICENSE', 'GPL-3.0-only', '', 'wget', d)} \
     which \
     xz \
     "
