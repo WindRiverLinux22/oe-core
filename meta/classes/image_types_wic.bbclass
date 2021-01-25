@@ -52,6 +52,11 @@ def wks_search(files, search_path):
 WIC_CREATE_EXTRA_ARGS ?= ""
 
 IMAGE_CMD:wic () {
+	[ -d "${IMAGE_ROOTFS}_wic" ] && rm -rf "${IMAGE_ROOTFS}_wic"
+	# Refer oe.path.copytree(src, dst): ${WORKDIR}/rootfs -> ${WORKDIR}/rootfs_wic
+	mkdir -p "${IMAGE_ROOTFS}_wic"
+	tar --xattrs --xattrs-include="*" -cf - -S -C "${IMAGE_ROOTFS}" -p . | tar --xattrs --xattrs-include="*" -xf - -C "${IMAGE_ROOTFS}_wic"
+
 	out="${IMGDEPLOYDIR}/${IMAGE_NAME}"
 	build_wic="${WORKDIR}/build-wic"
 	tmp_wic="${WORKDIR}/tmp-wic"
@@ -64,8 +69,10 @@ IMAGE_CMD:wic () {
 	if [ -z "$wks" ]; then
 		bbfatal "No kickstart files from WKS_FILES were found: ${WKS_FILES}. Please set WKS_FILE or WKS_FILES appropriately."
 	fi
-	BUILDDIR="${TOPDIR}" PSEUDO_UNLOAD=1 wic create "$wks" --vars "${STAGING_DIR}/${MACHINE}/imgdata/" -e "${IMAGE_BASENAME}" -o "$build_wic/" -w "$tmp_wic" ${WIC_CREATE_EXTRA_ARGS}
+
+	BUILDDIR="${TOPDIR}" PSEUDO_UNLOAD=1 wic create "$wks" --vars "${STAGING_DIR}/${MACHINE}/imgdata/" -e "${IMAGE_BASENAME}" -r "${IMAGE_ROOTFS}_wic" -o "$build_wic/" -w "$tmp_wic" ${WIC_CREATE_EXTRA_ARGS}
 	mv "$build_wic/$(basename "${wks%.wks}")"*.direct "$out${IMAGE_NAME_SUFFIX}.wic"
+	rm -rf "${IMAGE_ROOTFS}_wic"
 }
 IMAGE_CMD:wic[vardepsexclude] = "WKS_FULL_PATH WKS_FILES TOPDIR"
 do_image_wic[cleandirs] = "${WORKDIR}/build-wic"
