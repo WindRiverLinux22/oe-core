@@ -34,13 +34,16 @@ vars = vars + ["genericx86", "edgerouter", "beaglebone-yocto"]
 vars = vars + ["armeb", "arm", "armv5", "armv6", "armv4", "powerpc64", "aarch64", "riscv32", "riscv64", "x86", "mips64", "powerpc"]
 vars = vars + ["mipsarch", "x86-x32", "mips16e", "microblaze", "e5500-64b", "mipsisa32", "mipsisa64"]
 vars = vars + ["class-native", "class-target", "class-cross-canadian", "class-cross", "class-devupstream"]
-vars = vars + ["tune-",  "pn-", "forcevariable"]
+vars = vars + ["tune-",  "pn-", "df-", "forcevariable"]
 vars = vars + ["libc-musl", "libc-glibc", "libc-newlib","libc-baremetal"]
 vars = vars + ["task-configure", "task-compile", "task-install", "task-clean", "task-image-qa", "task-rm_work", "task-image-complete", "task-populate-sdk"]
 vars = vars + ["toolchain-clang", "mydistro", "nios2", "sdkmingw32", "overrideone", "overridetwo"]
 vars = vars + ["linux-gnux32", "linux-muslx32", "linux-gnun32", "mingw32", "poky", "darwin", "linuxstdbase"]
 vars = vars + ["linux-gnueabi", "eabi"]
 vars = vars + ["virtclass-multilib", "virtclass-mcextend"]
+vars = vars + ["osv-wrlinux", "clang-llvm", "wrlinux-ovp", "wrlinux-cgl"]
+vars = vars + ["intel-x86-64", "xilinx-zynq", "marvell-cn96xx", "bcm-2xxx-rpi4", "nxp-s32g2xx", "nxp-imx8", "ti-j72xx"]
+vars = vars + ["anaconda"]
 
 # List of strings to treat as overrides but only with whitespace following or another override (more restricted matching).
 # Handles issues with arc matching arch.
@@ -67,6 +70,8 @@ skips = skips + ["recipetool_append", "changetype_remove", "try_appendfile_wc", 
 imagevars = ["IMAGE_CMD", "EXTRA_IMAGECMD", "IMAGE_TYPEDEP", "CONVERSION_CMD", "COMPRESS_CMD"]
 packagevars = packagevars + imagevars
 
+pnwhitelistvars = ["PNWHITELIST"]
+
 vars_re = {}
 for exp in vars:
     vars_re[exp] = (re.compile('((^|[#\'"\s\-\+])[A-Za-z0-9_\-:${}\.]+)_' + exp), r"\1:" + exp)
@@ -78,6 +83,10 @@ for exp in shortvars:
 package_re = {}
 for exp in packagevars:
     package_re[exp] = (re.compile('(^|[#\'"\s\-\+]+)' + exp + '_' + '([$a-z"\'\s%\[<{\\\*].)'), r"\1" + exp + r":\2")
+
+pnwhitelist_re = {}
+for exp in pnwhitelistvars:
+    pnwhitelist_re[exp] = (re.compile('^' + exp + '_' + '([$a-z"\'\s%\[<{\\\*].)'), exp + r":\1")
 
 # Other substitutions to make
 subs = {
@@ -101,6 +110,8 @@ def processfile(fn):
                             skip = True
                             if "ptest_append" in line or "ptest_remove" in line or "ptest_prepend" in line:
                                 skip = False
+                    if line.strip().startswith('file://'):
+                        skip = True
                     for sub in subs:
                         if sub in line:
                             line = line.replace(sub, subs[sub])
@@ -108,12 +119,16 @@ def processfile(fn):
                     if not skip:
                         for pvar in packagevars:
                             line = package_re[pvar][0].sub(package_re[pvar][1], line)
+                        for wvar in pnwhitelistvars:
+                            line = pnwhitelist_re[wvar][0].sub(pnwhitelist_re[wvar][1], line)
                         for var in vars:
                             line = vars_re[var][0].sub(vars_re[var][1], line)
                         for shortvar in shortvars:
                             line = shortvars_re[shortvar][0].sub(shortvars_re[shortvar][1], line)
                     if "pkg_postinst:ontarget" in line:
                         line = line.replace("pkg_postinst:ontarget", "pkg_postinst_ontarget")
+                    if "intel:x86_64" in line:
+                        line = line.replace("intel:x86_64", "intel_x86_64")
                     new_file.write(line)
         shutil.copymode(fn, abs_path)
         os.remove(fn)
@@ -138,6 +153,8 @@ for targetdir in sys.argv[1:]:
             if os.path.islink(fn):
                 continue
             if "/.git/" in fn or fn.endswith(".html") or fn.endswith(".patch") or fn.endswith(".m4") or fn.endswith(".diff"):
+                continue
+            if '/downloads/' in fn or '/git/' in fn:
                 continue
             processfile(fn)
 
