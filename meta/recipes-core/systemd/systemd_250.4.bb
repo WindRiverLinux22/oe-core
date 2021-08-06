@@ -263,7 +263,9 @@ do_install() {
 		install -m 0644 $rule ${D}${sysconfdir}/udev/rules.d/
 	done
 
-	install -m 0644 ${WORKDIR}/00-create-volatile.conf ${D}${sysconfdir}/tmpfiles.d/
+	if [ ${@ oe.types.boolean('${VOLATILE_DIR}') } = True ]; then
+		install -m 0644 ${WORKDIR}/00-create-volatile.conf ${D}${sysconfdir}/tmpfiles.d/
+	fi
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
 		install -d ${D}${sysconfdir}/init.d
@@ -272,10 +274,11 @@ do_install() {
 		install -Dm 0755 ${S}/src/systemctl/systemd-sysv-install.SKELETON ${D}${systemd_unitdir}/systemd-sysv-install
 	fi
 
-	if "${@'true' if oe.types.boolean(d.getVar('VOLATILE_LOG_DIR')) else 'false'}"; then
+	if "${@'true' if oe.types.boolean(d.getVar('VOLATILE_DIR')) else 'false'}"; then
 		# /var/log is typically a symbolic link to inside /var/volatile,
 		# which is expected to be empty.
 		rm -rf ${D}${localstatedir}/log
+                rm -rf ${D}${localstatedir}/tmp
 	else
 		chown root:systemd-journal ${D}${localstatedir}/log/journal
 
