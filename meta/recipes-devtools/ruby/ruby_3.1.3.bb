@@ -47,6 +47,11 @@ do_configure:prepend() {
     rm -rf ${S}/ruby/
 }
 
+# Remove this test temporarily until it compatible with openssl 3
+do_install_ptest:append() {
+    rm -rf ${D}${PTEST_PATH}/test/net/smtp/test_smtp.rb
+}
+
 DEPENDS:append:libc-musl = " libucontext"
 
 SRC_URI[sha256sum] = "5ea498a35f4cd15875200a52dde42b6eb179e1264e17d78732c3a57cd1c6ab9e"
