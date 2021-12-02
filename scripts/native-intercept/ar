@@ -19,6 +19,8 @@ argv = sys.argv
 if argv[1].startswith('--'):
     # No modifier given
     None
+elif argv[1].startswith('@'):
+    argv.append('-D')
 else:
     # remove the optional '-'
     if argv[1][0] == '-':
