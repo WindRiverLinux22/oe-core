@@ -1,0 +1,53 @@
+From b3425f1e6a0044ad339a5441957bc9d4af75a841 Mon Sep 17 00:00:00 2001
+From: Chen Qi <Qi.Chen@windriver.com>
+Date: Tue, 18 Jan 2022 15:32:45 +0800
+Subject: [PATCH] Revert "units: enable systemd-network-generator by default"
+
+This reverts commit e053f49272e46c2ba941cbd3fd8bf07b089b2917.
+
+Upstream-Status: Pending
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+---
+ presets/90-systemd.preset         | 2 +-
+ units/systemd-networkd.service.in | 4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/presets/90-systemd.preset b/presets/90-systemd.preset
+index 25936d8f57..8a1a08210c 100644
+--- a/presets/90-systemd.preset
++++ b/presets/90-systemd.preset
+@@ -18,7 +18,6 @@ enable machines.target
+ enable getty@.service
+ enable systemd-timesyncd.service
+ enable systemd-networkd.service
+-enable systemd-network-generator.service
+ enable systemd-resolved.service
+ enable systemd-homed.service
+ enable systemd-userdbd.socket
+@@ -38,6 +37,7 @@ disable exit.target
+ disable systemd-networkd-wait-online.service
+ disable systemd-time-wait-sync.service
+ disable systemd-boot-check-no-failures.service
++disable systemd-network-generator.service
+ disable proc-sys-fs-binfmt_misc.mount
+ 
+ disable syslog.socket
+diff --git a/units/systemd-networkd.service.in b/units/systemd-networkd.service.in
+index 95dd2665b2..6acce036df 100644
+--- a/units/systemd-networkd.service.in
++++ b/units/systemd-networkd.service.in
+@@ -56,10 +56,6 @@ WantedBy=multi-user.target
+ Also=systemd-networkd.socket
+ Alias=dbus-org.freedesktop.network1.service
+ 
+-# The output from this generator is used by udevd and networkd. Enable it by
+-# default when enabling systemd-networkd.service.
+-Also=systemd-network-generator.service
+-
+ # We want to enable systemd-networkd-wait-online.service whenever this service
+ # is enabled. systemd-networkd-wait-online.service has
+ # WantedBy=network-online.target, so enabling it only has an effect if
+-- 
+2.17.1
+
