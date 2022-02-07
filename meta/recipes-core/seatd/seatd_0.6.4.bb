@@ -6,10 +6,9 @@ LICENSE = "MIT"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=715a99d2dd552e6188e74d4ed2914d5a"
 
-SRC_URI = "git://git.sr.ht/~kennylevinsen/seatd;protocol=https;nobranch=1 \
+SRC_URI = "https://git.sr.ht/~kennylevinsen/seatd/archive/${PV}.tar.gz;downloadfilename=${BP}.tar.gz \
            file://init"
-SRCREV = "df13d03f9cfd0dc0c2b3298cd0e5eb4e4a10835e"
-S = "${WORKDIR}/git"
+SRC_URI[sha256sum] = "3d4ac288114219ba7721239cafee7bfbeb7cf8e1e7fd653602a369e4ad050bd8"
 
 inherit meson pkgconfig update-rc.d
 
