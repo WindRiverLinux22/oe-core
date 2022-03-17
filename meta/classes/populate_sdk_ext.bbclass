@@ -835,3 +835,6 @@ do_populate_sdk_ext[sstate-outputdirs] = "${SDK_DEPLOY}"
 do_populate_sdk_ext[stamp-extra-info] = "${MACHINE_ARCH}"
 
 addtask populate_sdk_ext after do_sdk_depends
+
+# This needs to be here to ensure multilib eSDK works
+do_build[recrdeptask] = "do_build"
