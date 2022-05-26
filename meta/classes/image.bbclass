@@ -673,6 +673,15 @@ systemd_preset_all () {
     fi
 }
 
-IMAGE_PREPROCESS_COMMAND:append = " ${@ 'systemd_preset_all;' if bb.utils.contains('DISTRO_FEATURES', 'systemd', True, False, d) and not bb.utils.contains('IMAGE_FEATURES', 'stateless-rootfs', True, False, d) else ''} reproducible_final_image_task; "
+systemd_disable_units () {
+    #
+    # This function is used to disable systemd unit files, due to the incomplete
+    # implementation of systemctl preset.
+    #
+    rm -f ${IMAGE_ROOTFS}${sysconfdir}/systemd/system/network-online.target.wants/systemd-networkd-wait-online.service
+    rm -f ${IMAGE_ROOTFS}${sysconfdir}/systemd/system/sysinit.target.wants/systemd-network-generator.service
+}
+
+IMAGE_PREPROCESS_COMMAND:append = " ${@ 'systemd_preset_all; systemd_disable_units;' if bb.utils.contains('DISTRO_FEATURES', 'systemd', True, False, d) and not bb.utils.contains('IMAGE_FEATURES', 'stateless-rootfs', True, False, d) else ''} reproducible_final_image_task; "
 
 CVE_PRODUCT = ""
