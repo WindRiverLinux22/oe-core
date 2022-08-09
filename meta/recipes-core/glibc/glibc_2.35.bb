@@ -55,6 +55,7 @@ S = "${WORKDIR}/git"
 B = "${WORKDIR}/build-${TARGET_SYS}"
 
 PACKAGES_DYNAMIC = ""
+CFLAGS:append = "${@' -O2' if d.getVar('DEBUG_BUILD') == '1' else ''}"
 
 # the -isystem in bitbake.conf screws up glibc do_stage
 BUILD_CPPFLAGS = "-I${STAGING_INCDIR_NATIVE}"
