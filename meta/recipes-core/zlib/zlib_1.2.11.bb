@@ -11,6 +11,8 @@ SRC_URI = "${SOURCEFORGE_MIRROR}/libpng/${BPN}/${PV}/${BPN}-${PV}.tar.xz \
            file://0001-configure-Pass-LDFLAGS-to-link-tests.patch \
            file://CVE-2018-25032.patch \
            file://run-ptest \
+           file://0001-Fix-a-bug-when-getting-a-gzip-header-extra-field-wit.patch \
+           file://0001-Fix-extra-field-processing-bug-that-dereferences-NUL.patch \
            "
 UPSTREAM_CHECK_URI = "http://zlib.net/"
 
