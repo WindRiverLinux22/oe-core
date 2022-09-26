@@ -1,0 +1,114 @@
+From 04582ee50791df39c34da2a8c81101a64c79a3bd Mon Sep 17 00:00:00 2001
+From: Heng Guo <heng.guo@windriver.com>
+Date: Thu, 17 Mar 2022 12:26:12 +0800
+Subject: [PATCH 2/2] babeltrace: fix bug in --stream-intersection option
+
+If --stream-intersection option is used to filter trace, wrong result
+is got by babeltrace with commit: 61cf588beae752e5ddfc60b6b5310f769ac9e852.
+Fix it using INT64 instead of UINT64 in related codes.
+
+Upstream-Status: Inappropriate
+[https://bugs.lttng.org/attachments/538]
+
+Signed-off-by: Heng Guo <heng.guo@windriver.com>
+Signed-off-by: Xiangyu Chen <xiangyu.chen@windriver.com>
+---
+ formats/ctf/ctf.c                        | 8 ++++----
+ formats/ctf/iterator.c                   | 2 +-
+ include/babeltrace/ctf/events-internal.h | 2 +-
+ include/babeltrace/iterator.h            | 4 ++--
+ lib/iterator.c                           | 2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/formats/ctf/ctf.c b/formats/ctf/ctf.c
+index 3c774188..86f4e02e 100644
+--- a/formats/ctf/ctf.c
++++ b/formats/ctf/ctf.c
+@@ -973,8 +973,8 @@ int ctf_find_stream_intersection(struct bt_trace_descriptor *td_read,
+ 		struct packet_index_time *_cycles)
+ {
+ 	int stream_id, ret = 0;
+-	struct packet_index_time real = { 0, UINT64_MAX },
+-			cycles = { 0, UINT64_MAX };
++	struct packet_index_time real = { INT64_MIN, INT64_MAX },
++                        cycles = { INT64_MIN, INT64_MAX };
+ 	struct ctf_trace *tin = container_of(td_read, struct ctf_trace, parent);
+ 
+ 	/* At least one of the two return args must be provided. */
+@@ -1050,10 +1050,10 @@ end:
+  * Return a negative value on error.
+  */
+ int ctf_find_tc_stream_packet_intersection_union(struct bt_context *ctx,
+-		uint64_t *_ts_begin, uint64_t *_ts_end)
++		int64_t *_ts_begin, int64_t *_ts_end)
+ {
+ 	int ret = 0, i;
+-	uint64_t ts_begin = UINT64_MAX, ts_end = 0;
++	int64_t ts_begin = INT64_MAX, ts_end = INT64_MIN;
+ 
+ 	if (!ctx || !ctx->tc || !ctx->tc->array || !_ts_begin || !_ts_end) {
+ 		ret = -EINVAL;
+diff --git a/formats/ctf/iterator.c b/formats/ctf/iterator.c
+index 7ef3e0b1..31bb30c3 100644
+--- a/formats/ctf/iterator.c
++++ b/formats/ctf/iterator.c
+@@ -68,7 +68,7 @@ struct bt_ctf_iter *bt_ctf_iter_create_intersect(struct bt_context *ctx,
+ 		struct bt_iter_pos **inter_end_pos)
+ {
+ 	int ret;
+-	uint64_t begin, end;
++	int64_t begin, end;
+ 
+ 	/*
+ 	 * The iterator's range is the union of each trace's intersection of
+diff --git a/include/babeltrace/ctf/events-internal.h b/include/babeltrace/ctf/events-internal.h
+index 09786593..b6d9813e 100644
+--- a/include/babeltrace/ctf/events-internal.h
++++ b/include/babeltrace/ctf/events-internal.h
+@@ -85,7 +85,7 @@ void ctf_update_current_packet_index(struct ctf_stream_definition *stream,
+ 		struct packet_index *prev_index,
+ 		struct packet_index *cur_index);
+ int ctf_find_tc_stream_packet_intersection_union(struct bt_context *ctx,
+-		uint64_t *ts_begin, uint64_t *ts_end);
++		int64_t *ts_begin, int64_t *ts_end);
+ int ctf_tc_set_stream_intersection_mode(struct bt_context *ctx);
+ 
+ #endif /*_BABELTRACE_CTF_EVENTS_INTERNAL_H */
+diff --git a/include/babeltrace/iterator.h b/include/babeltrace/iterator.h
+index 5c3939c3..ad9f7edf 100644
+--- a/include/babeltrace/iterator.h
++++ b/include/babeltrace/iterator.h
+@@ -77,7 +77,7 @@ enum bt_iter_pos_type {
+ struct bt_iter_pos {
+ 	enum bt_iter_pos_type type;
+ 	union {
+-		uint64_t seek_time;
++		int64_t seek_time;
+ 		struct bt_saved_pos *restore;
+ 	} u;
+ };
+@@ -124,7 +124,7 @@ int bt_iter_set_pos(struct bt_iter *iter, const struct bt_iter_pos *pos);
+  * real timestamp.
+  */
+ struct bt_iter_pos *bt_iter_create_time_pos(struct bt_iter *iter,
+-		uint64_t timestamp);
++		int64_t timestamp);
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/lib/iterator.c b/lib/iterator.c
+index 77093217..c73ffa1c 100644
+--- a/lib/iterator.c
++++ b/lib/iterator.c
+@@ -636,7 +636,7 @@ error:
+ }
+ 
+ struct bt_iter_pos *bt_iter_create_time_pos(struct bt_iter *unused,
+-		uint64_t timestamp)
++		int64_t timestamp)
+ {
+ 	struct bt_iter_pos *pos;
+ 
+-- 
+2.34.1
+
