@@ -9,6 +9,8 @@ DEPENDS = "glib-2.0 util-linux popt bison-native flex-native"
 
 SRC_URI = "git://git.efficios.com/babeltrace.git;branch=stable-1.5 \
 	   file://run-ptest \
+	   file://0001-Handle-negative-time-and-offset-from-Epoch.patch \
+	   file://0002-babeltrace-fix-bug-in-stream-intersection-option.patch \
 	  "
 SRCREV = "054a54ae10b01a271afc4f19496c041b10fb414c"
 UPSTREAM_CHECK_GITTAGREGEX = "v(?P<pver>1(\.\d+)+)$"
