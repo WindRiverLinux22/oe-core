@@ -214,7 +214,10 @@ python create_source_date_epoch_stamp() {
 }
 do_unpack[postfuncs] += "create_source_date_epoch_stamp"
 
+do_unpack[vardeps] += 'WRL_PRESERVE_BUILDTIME'
 def get_source_date_epoch_value(d):
+    if d.getVar('WRL_PRESERVE_BUILDTIME') == '1':
+        return str(int(time.time()))
     return oe.reproducible.epochfile_read(d.getVar('SDE_FILE'), d)
 
 def get_layers_branch_rev(d):
