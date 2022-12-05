@@ -4,7 +4,7 @@ PR = "r1"
 
 inherit packagegroup features_check
 # rdepends on matchbox-wm
-REQUIRED_DISTRO_FEATURES = "x11"
+REQUIRED_DISTRO_FEATURES = "x11 opengl"
 
 RDEPENDS:${PN} = "\
     packagegroup-core-x11-xserver \
