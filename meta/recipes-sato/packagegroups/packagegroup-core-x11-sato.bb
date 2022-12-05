@@ -10,7 +10,7 @@ PR = "r33"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit packagegroup features_check
-REQUIRED_DISTRO_FEATURES = "x11"
+REQUIRED_DISTRO_FEATURES = "x11 opengl"
 
 PACKAGES = "${PN} ${PN}-base ${PN}-apps ${PN}-games"
 
