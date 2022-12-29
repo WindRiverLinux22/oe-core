@@ -17,7 +17,7 @@ XORGBUILDCLASS ??= "autotools"
 inherit ${XORGBUILDCLASS} pkgconfig features_check
 
 # depends on virtual/xserver
-REQUIRED_DISTRO_FEATURES = "x11 opengl"
+REQUIRED_DISTRO_FEATURES = "x11"
 
 # FIXME: We don't want to include the libtool archives (*.la) from modules
 # directory, as they serve no useful purpose. Upstream should fix Makefile.am
