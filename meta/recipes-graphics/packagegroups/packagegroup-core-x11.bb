@@ -5,7 +5,7 @@
 PR = "r40"
 
 inherit packagegroup features_check
-REQUIRED_DISTRO_FEATURES = "x11 opengl"
+REQUIRED_DISTRO_FEATURES = "x11"
 
 PACKAGES = "${PN} ${PN}-utils"
 
