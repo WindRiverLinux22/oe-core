@@ -28,6 +28,7 @@ SRC_URI += "file://touchscreen.rules \
            file://CVE-2022-3821.patch \
            file://CVE-2022-45873.patch \
            file://0001-shared-json-allow-json_variant_dump-to-return-an-err.patch \
+           file://0001-journal-Make-sd_journal_previous-next-return-0-at-HE.patch \
            "
 
 # patches needed by musl
