@@ -5,7 +5,7 @@ SECTION = "console/utils"
 LICENSE = "LGPL-2.1-or-later & GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=59a33f0a3e6122d67c0b3befccbdaa6b"
 
-SRC_URI = "https://strace.io/files/${PV}/strace-${PV}.tar.xz \
+SRC_URI = "https://github.com/strace/strace/releases/download/v${PV}/strace-${PV}.tar.xz \
            file://update-gawk-paths.patch \
            file://Makefile-ptest.patch \
            file://run-ptest \
