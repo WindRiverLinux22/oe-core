@@ -31,6 +31,7 @@ SRC_URI += "file://touchscreen.rules \
            file://CVE-2022-4415-1.patch \
            file://CVE-2022-4415-2.patch \
            file://0001-network-remove-only-managed-configs-on-reconfigure-o.patch \
+           file://0001-journal-Make-sd_journal_previous-next-return-0-at-HE.patch \
            "
 
 # patches needed by musl
