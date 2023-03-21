@@ -137,6 +137,9 @@ do_install:append:class-target() {
 }
 do_install:append:class-nativesdk() {
     rm -rf ${D}${SDKPATHNATIVE}/var
+    # Ensure find-debuginfo is located correctly inside SDK
+    mkdir -p ${D}${SDKPATHNATIVE}/etc/rpm
+    echo "%__find_debuginfo   ${SDKPATHNATIVE}/usr/bin/find-debuginfo" >> ${D}${SDKPATHNATIVE}/etc/rpm/macros
 }
 
 do_install:append () {
@@ -162,9 +165,7 @@ FILES:${PN}-build = "\
     ${libdir}/librpmbuild.so.* \
     ${libdir}/rpm/brp-* \
     ${libdir}/rpm/check-* \
-    ${libdir}/rpm/debugedit \
     ${libdir}/rpm/sepdebugcrcfix \
-    ${libdir}/rpm/find-debuginfo.sh \
     ${libdir}/rpm/find-lang.sh \
     ${libdir}/rpm/*provides* \
     ${libdir}/rpm/*requires* \
@@ -176,6 +177,8 @@ FILES:${PN}-build = "\
     ${libdir}/rpm/macros.p* \
     ${libdir}/rpm/fileattrs/* \
 "
+
+FILES:${PN}-build:append:class-nativesdk = " ${SDKPATHNATIVE}/etc/rpm/macros"
 
 FILES:${PN}-sign = "\
     ${bindir}/rpmsign \
@@ -190,7 +193,7 @@ PACKAGES += "python3-rpm"
 PROVIDES += "python3-rpm"
 FILES:python3-rpm = "${PYTHON_SITEPACKAGES_DIR}/rpm/*"
 
-RDEPENDS:${PN}-build = "bash perl python3-core"
+RDEPENDS:${PN}-build = "bash perl python3-core debugedit"
 
 PACKAGE_PREPROCESS_FUNCS += "rpm_package_preprocess"
 
