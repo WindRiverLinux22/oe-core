@@ -20,6 +20,8 @@ SRC_URI += "\
     file://0001-net-http-httputil-avoid-query-parameter-smuggling.patch \
     file://CVE-2022-41715.patch \
     file://CVE-2022-41717.patch \
+    file://0001-archive-tar-limit-size-of-headers.patch \
+    file://0002-os-net-http-avoid-escapes-from-os.DirFS-and-http.Dir.patch \
 "
 SRC_URI[main.sha256sum] = "a1a48b23afb206f95e7bbaa9b898d965f90826f6f1d1fc0c1d784ada0cd300fd"
 
