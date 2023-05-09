@@ -153,7 +153,7 @@ SYSTEMD_AUTO_ENABLE:${PN}-uuidd = "disable"
 SYSTEMD_SERVICE:${PN}-fstrim = "fstrim.timer fstrim.service"
 SYSTEMD_AUTO_ENABLE:${PN}-fstrim = "disable"
 
-pkg_postinst_${PN}-uuidd() {
+pkg_postinst:${PN}-uuidd() {
 	if [ -z "$D" ] && [ -e ${sysconfdir}/init.d/populate-volatile.sh ] ; then
 		${sysconfdir}/init.d/populate-volatile.sh update
 	fi
