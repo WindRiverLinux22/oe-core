@@ -8,9 +8,6 @@ require recipes-kernel/linux/linux-yocto.inc
 LINUX_VERSION ?= "5.15.108"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
-DEPENDS += "openssl-native util-linux-native"
-
 KMETA = "kernel-meta"
 KCONF_BSP_AUDIT_LEVEL = "2"
 
